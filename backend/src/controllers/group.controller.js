@@ -221,3 +221,60 @@ export const drawParticipants = async (req, res) => {
         return res.status(500).json({ error: "Internal server error." });
     }
 };
+
+/**
+ * Retrieves the Secret Santa match (the recipient's name) for the authenticated user.
+ * This is called by the Group Page once the group status is 'drawn'.
+ * @param {*} req 
+ * @param {*} res 
+ * @returns {object} The recipient's name, group name, and gift limit.
+ */
+export const getParticipantMatch = async (req, res) => {
+    const { groupId } = req.params;
+    // The Giver's ID (the person logged in) is provided by the JWT middleware.
+    const giverId = req.participant.participantId;
+
+    // 1. Authorization Check (Ensures the user belongs to the requested group)
+    if (!req.participant || req.participant.groupId.toString() !== groupId) {
+        return res.status(403).json({ error: "Access denied. You do not belong to this group." });
+    }
+
+    try {
+        const group = await Group.findById(groupId);
+
+        if (!group) {
+            return res.status(404).json({ error: "Group not found." });
+        }
+        if (group.status !== 'drawn') {
+            return res.status(400).json({ error: "The draw has not been conducted yet." });
+        }
+
+        // 2. Lookup the Recipient ID (The Match)
+        // The pairings map is stored as { giverId: receiverId }
+        const receiverId = group.pairings[giverId];
+
+        if (!receiverId) {
+            // This is a safety check for a data integrity issue
+            return res.status(404).json({ error: "Your Secret Santa match could not be found in the pairings." });
+        }
+
+        // 3. Lookup the Recipient's Name
+        const receiver = await Participant.findById(receiverId).select('name');
+
+        if (!receiver) {
+            // Data integrity check: pairing points to a non-existent participant
+            return res.status(500).json({ error: "Recipient participant record is missing." });
+        }
+
+        // 4. Success: Return ONLY the necessary information
+        return res.status(200).json({
+            recipientName: receiver.name,
+            groupName: group.name,
+            giftLimit: group.giftLimit
+        });
+
+    } catch (error) {
+        console.error("Error fetching participant match:", error);
+        return res.status(500).json({ error: "Internal server error." });
+    }
+};

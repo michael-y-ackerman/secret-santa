@@ -5,7 +5,7 @@ import postmark from "postmark";
 const POSTMARK_API_KEY = process.env.POSTMARK_API_KEY;
 
 // Initialize the client
-const client = new postmark.ServerClient(POSTMARK_API_KEY || "test_key"); // Prevent crash on missing key during dev if env not loaded yet, though we fixed loading.
+const client = new postmark.ServerClient(POSTMARK_API_KEY);
 
 /**
  * Sends a verification email to a participant with their unique magic link.

@@ -2,6 +2,8 @@ import dotenv from 'dotenv'; // Load env vars before other imports
 import express from 'express';
 import cookieParser from 'cookie-parser';
 
+import cors from 'cors';
+
 dotenv.config();
 
 import groupRoutes from './routes/group.route.js';
@@ -11,6 +13,11 @@ import { connectDB } from './utils/db.util.js';
 const PORT = process.env.PORT || 3000;
 
 const app = express();
+app.use(cors({
+  origin: process.env.FRONTEND_URL,
+  credentials: true
+}));
+
 app.use(express.json());
 app.use(cookieParser());
 
