@@ -1,11 +1,10 @@
-import dotenv from 'dotenv'; // Load env vars before other imports
-import express from 'express';
-import cookieParser from 'cookie-parser';
-
-import cors from 'cors';
+import * as dotenv from 'dotenv'
 
 dotenv.config();
 
+import express from 'express';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import groupRoutes from './routes/group.route.js';
 import participantRoutes from './routes/participant.route.js';
 import { connectDB } from './utils/db.util.js';

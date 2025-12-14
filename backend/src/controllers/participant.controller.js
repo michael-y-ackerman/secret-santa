@@ -2,6 +2,7 @@ import Participant from "../models/participant.model.js";
 import { generateAccessToken, attachTokenCookie } from "../utils/token.util.js";
 
 export const verifyParticipantEmail = async (req, res) => {
+    console.log(`[REQUEST] ${req.method} ${req.originalUrl} — verifyParticipantEmail — token: ${req.query?.token || 'none'}`);
     const { token } = req.query;
 
     if (!token) {
@@ -46,5 +47,14 @@ export const verifyParticipantEmail = async (req, res) => {
     }
 };
 
-export const resendVerificationEmail = async (req, res) => {};
-export const updateParticipantDetails = async (req, res) => {};
+export const resendVerificationEmail = async (req, res) => {
+    console.log(`[REQUEST] ${req.method} ${req.originalUrl} — resendVerificationEmail — participant: ${req.participant?.participantId || 'unknown'}`);
+    // TODO: implement resend logic
+    res.status(501).json({ message: 'Not implemented yet.' });
+};
+
+export const updateParticipantDetails = async (req, res) => {
+    console.log(`[REQUEST] ${req.method} ${req.originalUrl} — updateParticipantDetails — participant: ${req.participant?.participantId || 'unknown'}`);
+    // TODO: implement update logic
+    res.status(501).json({ message: 'Not implemented yet.' });
+};

@@ -1,9 +1,8 @@
 // src/utils/email.util.js
 import postmark from "postmark";
 
-// NOTE: It is best practice to load the API key from environment variables
 const POSTMARK_API_KEY = process.env.POSTMARK_API_KEY;
-
+console.log(`Postmark API Key Loaded: ${POSTMARK_API_KEY}`);
 // Initialize the client
 const client = new postmark.ServerClient(POSTMARK_API_KEY);
 
@@ -19,9 +18,10 @@ export const sendParticipantVerificationEmail = async (participantEmail, partici
     // We need the group name in the email body, so let's adjust the parameters to include it.
     // NOTE: I've added 'groupName' to the function signature below.
 
-    console.log(`Sending verification email to ${participantEmail} (Group: ${groupName}) with link: ${verificationLink}`);
+    console.log(`[EMAIL] Sending participant verification email to ${participantEmail} (Group: ${groupName})`);
 
     try {
+        console.log(`[EMAIL] [START] sendParticipantVerificationEmail -> ${participantEmail}`);
         await client.sendEmail({
             // Ensure the 'From' email is a verified sender signature in Postmark
             "From": "Secret Santa <verify@secretsanta.michaelyackerman.com>",
@@ -66,7 +66,7 @@ export const sendParticipantVerificationEmail = async (participantEmail, partici
         });
 
         // Postmark API call was successful
-        console.log(`Successfully sent verification email to ${participantEmail}.`);
+        console.log(`[EMAIL] [SUCCESS] sendParticipantVerificationEmail -> ${participantEmail}`);
 
     } catch (error) {
         // Log the full Postmark error for debugging
@@ -83,9 +83,10 @@ export const sendParticipantVerificationEmail = async (participantEmail, partici
  * @param {string} verificationLink 
  */
 export const sendCreatorVerificationEmail = async (creatorEmail, creatorName, groupName, verificationLink) => {
-    console.log(`Sending CREATOR verification email to ${creatorEmail} for group ${groupName}`);
+    console.log(`[EMAIL] Sending creator verification email to ${creatorEmail} (Group: ${groupName})`);
 
     try {
+        console.log(`[EMAIL] [START] sendCreatorVerificationEmail -> ${creatorEmail}`);
         await client.sendEmail({
             "From": "Secret Santa <verify@secretsanta.michaelyackerman.com>",
             "To": creatorEmail,
@@ -117,7 +118,7 @@ export const sendCreatorVerificationEmail = async (creatorEmail, creatorName, gr
             "TextBody": `Hello ${creatorName},\n\nYou created the ${groupName} Secret Santa group! Verify your email here: ${verificationLink}`
         });
 
-        console.log(`Successfully sent creator verification email to ${creatorEmail}.`);
+        console.log(`[EMAIL] [SUCCESS] sendCreatorVerificationEmail -> ${creatorEmail}`);
 
     } catch (error) {
         console.error(`Postmark Error sending creator email to ${creatorEmail}:`, error);
@@ -140,6 +141,7 @@ export const sendDrawNotificationEmails = async (participants, groupName, giftLi
         return acc;
     }, {});
 
+    console.log(`[EMAIL] Starting draw notification emails: count=${participants.length} group=${groupName}`);
     const sendPromises = participants.map(giver => {
         const receiverId = pairings[giver._id.toString()];
         const receiver = participantMap[receiverId];
@@ -161,7 +163,14 @@ export const sendDrawNotificationEmails = async (participants, groupName, giftLi
     });
 
     // Wait for all emails to attempt sending
-    await Promise.allSettled(sendPromises);
+    const results = await Promise.allSettled(sendPromises);
+
+    const summary = results.reduce((acc, r) => {
+        if (r.status === 'fulfilled') acc.success += 1; else acc.fail += 1;
+        return acc;
+    }, { success: 0, fail: 0 });
+
+    console.log(`[EMAIL] Draw notification summary for group=${groupName}: attempted=${participants.length}, success=${summary.success}, fail=${summary.fail}`);
 };
 
 
@@ -179,6 +188,7 @@ export const sendDrawNotificationEmail = async (giverEmail, giverName, receiverN
     const limitText = giftLimit ? `The spending limit is **$${giftLimit}**.` : "There is no official spending limit set.";
 
     try {
+        console.log(`[EMAIL] [START] sendDrawNotificationEmail -> ${giverEmail} for receiver=${receiverName} in group=${groupName}`);
         await client.sendEmail({
             "From": "Secret Santa <notify@secretsanta.michaelyackerman.com>",
             "To": giverEmail,
@@ -203,6 +213,6 @@ export const sendDrawNotificationEmail = async (giverEmail, giverName, receiverN
         });
 
     } catch (error) {
-        console.error(`Postmark Error sending match email to ${giverEmail}:`, error);
+        console.error(`[EMAIL] [ERROR] sendDrawNotificationEmail -> ${giverEmail} :`, error);
     }
 };

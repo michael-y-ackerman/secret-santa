@@ -13,6 +13,7 @@ import { drawingAlgorithm } from "../utils/draw.util.js";
  * @returns 
  */
 export const createGroup = async (req, res) => {
+    console.log(`[REQUEST] ${req.method} ${req.originalUrl} — createGroup — payload: ${JSON.stringify({ name: req.body?.name, creatorEmail: req.body?.creatorEmail })}`);
     try {
         const { name, creatorEmail, creatorName, giftLimit } = req.body;
 
@@ -48,6 +49,7 @@ export const createGroup = async (req, res) => {
             name,
             `${process.env.BASE_URL}/verify-status?token=${token}`
         );
+        console.log(`[EMAIL] Initiated creator verification email to ${creatorEmail}`);
 
         res.status(201).json({
             message: "Group created successfully! Please check your email to verify your participation.",
@@ -62,6 +64,7 @@ export const createGroup = async (req, res) => {
 
 export const getGroupPublicDetails = async (req, res) => {
     const { groupId } = req.params;
+    console.log(`[REQUEST] ${req.method} ${req.originalUrl} — getGroupPublicDetails — groupId: ${groupId}`);
 
     try {
         const group = await Group.findById(groupId);
@@ -91,6 +94,7 @@ export const getGroupPublicDetails = async (req, res) => {
 
 export const getGroupRoster = async (req, res) => {
     const { groupId } = req.params;
+    console.log(`[REQUEST] ${req.method} ${req.originalUrl} — getGroupRoster — groupId: ${groupId} — participant: ${req.participant?.participantId || 'unknown'}`);
 
     // Check authentication and authorization here
     if (!req.participant || req.participant.groupId.toString() !== groupId) {
@@ -115,6 +119,7 @@ export const getGroupRoster = async (req, res) => {
 
 export const joinGroup = async (req, res) => {
     const { groupId } = req.params;
+    console.log(`[REQUEST] ${req.method} ${req.originalUrl} — joinGroup — groupId: ${groupId} — payload: ${JSON.stringify({ name: req.body?.name, email: req.body?.email })}`);
     const { name, email } = req.body;
 
     if (!name || !email) {
@@ -162,6 +167,7 @@ export const joinGroup = async (req, res) => {
             group.name,
             participantVerificationLink
         );
+        console.log(`[EMAIL] Sent participant verification email to ${email}`);
 
         return res.status(201).json({
             message: "Successfully joined the group! Please check your email to verify your participation.",
@@ -175,6 +181,7 @@ export const joinGroup = async (req, res) => {
 
 export const drawParticipants = async (req, res) => {
     const { groupId } = req.params;
+    console.log(`[REQUEST] ${req.method} ${req.originalUrl} — drawParticipants — groupId: ${groupId} — by: ${req.participant?.participantId || 'unknown'}`);
 
     try {
         const group = await Group.findById(groupId);
@@ -207,6 +214,7 @@ export const drawParticipants = async (req, res) => {
         await group.save();
 
         await emailUtils.sendDrawNotificationEmails(verifiedParticipants, group.name, group.giftLimit, pairings);
+        console.log(`[EMAIL] Completed draw notification emails for group ${group.name}`);
 
         return res.status(200).json({
             message: "Draw completed successfully! Participants are being notified.",
@@ -231,6 +239,7 @@ export const drawParticipants = async (req, res) => {
  */
 export const getParticipantMatch = async (req, res) => {
     const { groupId } = req.params;
+    console.log(`[REQUEST] ${req.method} ${req.originalUrl} — getParticipantMatch — groupId: ${groupId} — participant: ${req.participant?.participantId || 'unknown'}`);
     // The Giver's ID (the person logged in) is provided by the JWT middleware.
     const giverId = req.participant.participantId;
 
