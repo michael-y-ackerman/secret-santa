@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { axiosInstance } from '../lib/axios';
+import toast from 'react-hot-toast';
 
 const JoinGroupPage = () => {
     const { groupId } = useParams();
@@ -13,10 +14,11 @@ const JoinGroupPage = () => {
 
         try {
             await axiosInstance.post(`/groups/${groupId}/join`, data);
+            toast.success("Success! Check your email to verify.");
             setStatus("Success! Check your email to verify.");
         } catch (error) {
             console.error(error);
-            setStatus("Error: " + (error.response?.data?.error || error.message));
+            toast.error("Error: " + (error.response?.data?.error || error.message));
         }
     };
 

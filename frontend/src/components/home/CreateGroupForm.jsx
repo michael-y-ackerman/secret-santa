@@ -1,4 +1,5 @@
 import { axiosInstance } from '../../lib/axios';
+import toast from 'react-hot-toast';
 
 const CreateGroupForm = ({ onCancel }) => {
     const handleSubmit = async (e) => {
@@ -8,10 +9,10 @@ const CreateGroupForm = ({ onCancel }) => {
 
         try {
             await axiosInstance.post('/groups/', data);
-            alert("Group created! Check your email to verify.");
+            toast.success("Group created! Check your email to verify.");
         } catch (error) {
             console.error(error);
-            alert("Error creating group");
+            toast.error("Error creating group");
         }
     };
 

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { MoreVertical, Trash2, Link as LinkIcon } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { useAuthStore } from '../../store/auth.store';
 import { axiosInstance } from '../../lib/axios';
 
@@ -11,7 +12,7 @@ const MyGroupsList = () => {
         e.preventDefault(); // Prevent navigation
         const link = `${window.location.origin}/groups/${groupId}/join`;
         navigator.clipboard.writeText(link);
-        alert("Invite link copied to clipboard!");
+        toast.success("Invite link copied to clipboard!");
     };
 
     // Delete handling
@@ -27,7 +28,7 @@ const MyGroupsList = () => {
             checkSession(); // Refresh list
         } catch (err) {
             console.error(err);
-            alert("Failed to delete group. Only the creator can delete it.");
+            toast.error("Failed to delete group. Only the creator can delete it.");
         }
     };
 

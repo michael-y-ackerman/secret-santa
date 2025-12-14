@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import { Toaster } from 'react-hot-toast';
 
 import { useEffect } from "react";
 import { useAuthStore } from "../store/auth.store";
@@ -17,6 +18,7 @@ const RootLayout = () => {
             <div className="container mx-auto px-4">
                 <Outlet />
             </div>
+            <Toaster position="bottom-center" />
         </div>
     );
 };

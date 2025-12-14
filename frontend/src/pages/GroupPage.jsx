@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { axiosInstance } from '../lib/axios';
 import { useAuthStore } from '../store/auth.store';
+import toast from 'react-hot-toast';
 import MatchReveal from '../components/group/MatchReveal';
 import RosterList from '../components/group/RosterList';
 import GroupStats from '../components/group/GroupStats';
@@ -53,18 +54,18 @@ const GroupPage = () => {
   const handleCopyInvite = () => {
     const link = `${window.location.origin}/groups/join/${groupId}`;
     navigator.clipboard.writeText(link);
-    alert("Invite link copied to clipboard: " + link);
+    toast.success("Invite link copied to clipboard");
   };
 
   const handleDraw = async () => {
     if (!confirm("Are you sure you want to start the draw? This cannot be undone.")) return;
     try {
       await axiosInstance.post(`/groups/${groupId}/draw`);
-      alert("Draw started successfully! Check emails.");
+      toast.success("Draw started successfully! Check emails.");
       window.location.reload();
     } catch (err) {
       console.error(err);
-      alert("Draw failed: " + (err.response?.data?.error || err.message));
+      toast.error("Draw failed: " + (err.response?.data?.error || err.message));
     }
   };
 
