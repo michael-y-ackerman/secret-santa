@@ -47,7 +47,7 @@ export const createGroup = async (req, res) => {
             creatorEmail,
             creatorName,
             name,
-            `${process.env.BASE_URL}/verify-status?token=${token}`
+            `${process.env.FRONTEND_URL}/verify-status?token=${token}`
         );
         console.log(`[EMAIL] Initiated creator verification email to ${creatorEmail}`);
 
@@ -159,7 +159,7 @@ export const joinGroup = async (req, res) => {
         group.participantIds.push(newParticipant._id);
         await group.save();
 
-        const participantVerificationLink = `${process.env.BASE_URL}/verify-status?token=${verificationToken}`;
+        const participantVerificationLink = `${process.env.FRONTEND_URL}/verify-status?token=${verificationToken}`;
 
         await emailUtils.sendParticipantVerificationEmail(
             email,
