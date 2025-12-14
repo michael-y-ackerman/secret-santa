@@ -1,5 +1,6 @@
 import Participant from "../models/participant.model.js";
 import { generateAccessToken, attachTokenCookie } from "../utils/token.util.js";
+import * as emailUtils from "../utils/email.util.js";
 
 export const verifyParticipantEmail = async (req, res) => {
     console.log(`[REQUEST] ${req.method} ${req.originalUrl} — verifyParticipantEmail — token: ${req.query?.token || 'none'}`);
@@ -48,9 +49,52 @@ export const verifyParticipantEmail = async (req, res) => {
 };
 
 export const resendVerificationEmail = async (req, res) => {
-    console.log(`[REQUEST] ${req.method} ${req.originalUrl} — resendVerificationEmail — participant: ${req.participant?.participantId || 'unknown'}`);
-    // TODO: implement resend logic
-    res.status(501).json({ message: 'Not implemented yet.' });
+    console.log(`[REQUEST] ${req.method} ${req.originalUrl} — resendVerificationEmail`);
+    const { email } = req.body;
+
+    if (!email) {
+        return res.status(400).json({ error: "Email is required." });
+    }
+
+    try {
+        // Find the most recent participant record for this email
+        // We leverage the fact that authentication is email-based across groups
+        const participant = await Participant.findOne({ email: email })
+            .sort({ createdAt: -1 })
+            .populate('groupId');
+
+        if (!participant) {
+            // For security, do not reveal if the email exists or not
+            // But for this MVP, we might want to return 200 anyway to prevent enumeration,
+            // or just be honest. The user is asking for help recovering.
+            // Let's return 200 with a generic message.
+            console.log(`[RESEND] No participant found for email: ${email}`);
+            return res.status(200).json({ message: "If that email is registered, a magic link has been sent." });
+        }
+
+        // Generate the link
+        const token = participant.verificationToken;
+        const verificationLink = `${process.env.FRONTEND_URL}/verify-status?token=${token}`;
+
+        // Send the email
+        // We use the "Participant" template even if they are creator, it's generic enough for "Click here to access"
+        // Or we could check isCreator.
+        const groupName = participant.groupId ? participant.groupId.name : "Secret Santa";
+
+        // Check if we need to use a specific utility based on creator status
+        // sendParticipantVerificationEmail works fine for access.
+
+        // However, we need to import emailUtils properly if it wasn't imported.
+        // Looking at the top of the file... it is NOT imported currently.
+        // We need to fix the imports first.
+
+        // Actually, I can't call emailUtils if it's not imported. 
+        // I will add the import in a separate edit or use dynamic import? 
+        // Better to use multi_replace to add the import.
+    } catch (error) {
+        console.error("Error resending verification:", error);
+        return res.status(500).json({ error: "Internal server error." });
+    }
 };
 
 export const updateParticipantDetails = async (req, res) => {

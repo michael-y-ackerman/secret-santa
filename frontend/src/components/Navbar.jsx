@@ -1,8 +1,11 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Gift, Users } from 'lucide-react';
 import { useAuthStore } from '../store/auth.store';
+import LoginModal from './home/LoginModal';
 
 const Navbar = () => {
+    const [isLoginOpen, setIsLoginOpen] = useState(false);
     const groupId = useAuthStore((state) => state.groupId);
     const myGroups = useAuthStore((state) => state.myGroups);
 
@@ -21,9 +24,19 @@ const Navbar = () => {
                             <span className="text-lg">🏠</span> Home
                         </Link>
                     </li>
-
+                    {!groupId && (
+                        <li>
+                            <button
+                                onClick={() => setIsLoginOpen(true)}
+                                className="text-amber-900 hover:text-red-700 font-medium font-serif flex items-center gap-1 bg-white px-4 py-2 rounded-full border border-stone-200 cursor-pointer shadow-sm hover:shadow-md transition-all"
+                            >
+                                Login
+                            </button>
+                        </li>
+                    )}
                 </ul>
             </div>
+            <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
         </div>
     );
 };

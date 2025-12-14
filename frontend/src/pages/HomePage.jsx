@@ -5,10 +5,12 @@ import HomeHero from '../components/home/HomeHero';
 import ActionCard from '../components/home/ActionCard';
 import CreateGroupForm from '../components/home/CreateGroupForm';
 import MyGroupsList from '../components/home/MyGroupsList';
+import LoginModal from '../components/home/LoginModal';
 
 
 const HomePage = () => {
   const [mode, setMode] = useState(null); // null = selection, 'full' = form
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
 
   const { myGroups } = useAuthStore(); // Added useAuthStore hook
   const hasGroups = myGroups && myGroups.length > 0; // Added hasGroups logic
@@ -61,6 +63,8 @@ const HomePage = () => {
                 <MyGroupsList />
               </div>
             </div>
+            {/* Added: "Not you?" or "Recover" link under the list if they have groups but want to switch? */}
+            {/* For now, we only need the login button when they DON'T have groups showing, but user might want to recover even if 0 groups show. */}
           </div>
         </div>
       ) : (
@@ -83,6 +87,16 @@ const HomePage = () => {
                 isSelected={false}
               />
             </div>
+            
+             <div className="text-center mt-12 animate-fade-in-up delay-200">
+                <p className="text-stone-500 mb-2 font-serif italic">Already part of a group?</p>
+                <button 
+                    onClick={() => setIsLoginOpen(true)}
+                    className="btn btn-ghost hover:bg-amber-100 text-amber-800 underline decoration-amber-300 decoration-2 underline-offset-4"
+                >
+                    Recover your session here
+                </button>
+             </div>
           )}
 
           {mode === 'full' && (
@@ -90,6 +104,7 @@ const HomePage = () => {
           )}
         </>
       )}
+      <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
     </div>
   );
 };
