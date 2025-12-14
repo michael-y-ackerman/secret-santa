@@ -216,13 +216,17 @@ export const drawParticipants = async (req, res) => {
         await emailUtils.sendDrawNotificationEmails(verifiedParticipants, group.name, group.giftLimit, pairings);
         console.log(`[EMAIL] Completed draw notification emails for group ${group.name}`);
 
+        // Update status to completed now that emails are sent
+        group.status = "completed";
+        await group.save();
+
         return res.status(200).json({
             message: "Draw completed successfully! Participants are being notified.",
             pairingsCount: Object.keys(pairings).length
         })
     } catch (error) {
         if (error.message.includes("No-Self-Match Pairing")) {
-            return res.status(500).json({ error: "Failed to complete the draw due to pairing issues. Please try again." });
+            return res.status(500).json({ error: "Failed to complete the draw due to pairing issues. Please try again.", error: error.message });
         }
 
         console.error("Error during drawParticipants:", error);
@@ -254,7 +258,7 @@ export const getParticipantMatch = async (req, res) => {
         if (!group) {
             return res.status(404).json({ error: "Group not found." });
         }
-        if (group.status !== 'drawn') {
+        if (group.status !== 'completed') {
             return res.status(400).json({ error: "The draw has not been conducted yet." });
         }
 
@@ -285,5 +289,46 @@ export const getParticipantMatch = async (req, res) => {
     } catch (error) {
         console.error("Error fetching participant match:", error);
         return res.status(500).json({ error: "Internal server error." });
+    }
+};
+
+export const deleteGroup = async (req, res) => {
+    console.log(`[REQUEST] ${req.method} ${req.originalUrl} — deleteGroup`);
+    try {
+        const { groupId } = req.params;
+        const participantId = req.participant.participantId;
+
+        // 1. Check if group exists
+        const group = await Group.findById(groupId);
+        if (!group) return res.status(404).json({ error: "Group not found." });
+
+        // 2. Verify Creator Permission
+        // We check if there is ANY participant record for this user's email 
+        // in the TARGET group that has isCreator=true.
+        // This handles cases where the current token belongs to "Participant A" in "Group A",
+        // but they are trying to delete "Group B" where they are "Participant B" (Creator).
+        const requesterEmail = req.participant.email; // Extracted from token
+
+        const creatorParticipant = await Participant.findOne({
+            groupId: groupId,
+            email: requesterEmail,
+            isCreator: true
+        });
+
+        if (!creatorParticipant) {
+            return res.status(403).json({ error: "Only the group creator can delete this group." });
+        }
+
+        // 3. Delete all participants
+        await Participant.deleteMany({ groupId: groupId });
+
+        // 4. Delete the group
+        await Group.findByIdAndDelete(groupId);
+
+        res.status(200).json({ message: "Group deleted successfully." });
+
+    } catch (error) {
+        console.error("Error deleting group:", error);
+        res.status(500).json({ error: "Internal server error." });
     }
 };

@@ -1,68 +1,61 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@import "tailwindcss";
+@plugin "daisyui";
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+@theme {
+  --font-serif: "Merriweather", serif;
+  --font-display: "Mountains of Christmas", serif;
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+  --color-holly-red-700: #b91c1c;
+  --color-holly-red-800: #991b1b;
+  --color-gold-600: #d97706;
+  --color-gold-700: #b45309;
+  --color-snow: #fffbeb;
 }
 
 body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  font-family: var(--font-serif);
+  background-color: var(--color-snow);
+  background-image:
+    radial-gradient(circle at 10% 20%, rgba(217, 119, 6, 0.05) 0%, transparent 20%),
+    radial-gradient(circle at 90% 80%, rgba(185, 28, 28, 0.05) 0%, transparent 20%);
+  background-attachment: fixed;
+  color: #44403c;
+  /* stone-700 */
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
+input,
+button,
+select,
+textarea {
   font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+/* Utilities */
+.glass-panel {
+  @apply bg-white/70 backdrop-blur-lg border border-white/40 shadow-xl;
+}
+
+.card-hover {
+  @apply transition-transform hover:-translate-y-1 duration-300;
+}
+
+.text-shadow-sm {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.input-premium {
+  @apply input input-bordered bg-white border-amber-200 focus:border-red-400 focus:ring-2 focus:ring-red-100 transition-all text-stone-800 placeholder:text-stone-400 shadow-inner;
+}
+
+.btn-premium {
+  @apply btn btn-error text-white shadow-lg hover:bg-red-700 border-none cursor-pointer;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @apply text-red-800 font-display;
 }

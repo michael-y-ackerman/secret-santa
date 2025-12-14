@@ -2,7 +2,9 @@
 
 /**
  * Standard array shuffle utility (Fisher-Yates)
+ * Shuffles the array in place.
  * @param {Array} array - The array to shuffle.
+ * @returns {Array} The shuffled array.
  */
 const shuffle = (array) => {
     let currentIndex = array.length, randomIndex;
@@ -20,51 +22,41 @@ const shuffle = (array) => {
 };
 
 /**
- * Conducts the Secret Santa draw, guaranteeing no one buys a gift for themselves.
- * @param {Array<string>} participantIds - Array of all verified participant IDs.
+ * Conducts the Secret Santa draw, guaranteeing no one buys a gift for themselves
+ * (a Derangement). Uses the efficient Shuffle + Single Rotation Fix method.
+ * * @param {Array<string>} participantIds - Array of all unique participant IDs.
  * @returns {Object<string, string>} An object where key=Giver ID, value=Receiver ID.
+ * @throws {Error} If there are less than 2 participants.
  */
 export const drawingAlgorithm = (participantIds) => {
-    
+    const N = participantIds.length;
+
+    if (N < 2) {
+        throw new Error("Secret Santa requires at least two participants.");
+    }
+
     // 1. Preparation: Lists representing Givers and Receivers
     const givers = [...participantIds];
     let receivers = [...participantIds];
-    
-    // 2. Initial Random Assignment
-    shuffle(receivers);
-    
-    // 3. Check and Fix Errors (Self-Match Audit)
-    let selfMatchFound = true;
-    let attempts = 0;
-    
-    while (selfMatchFound && attempts < 15) {
-        selfMatchFound = false;
-        
-        // Audit: Check for Giver ID === Receiver ID
-        for (let i = 0; i < givers.length; i++) {
+    let isValid = false;
+
+    // 2. Rejection Sampling: Shuffle indefinitely until we find a Derangement (no value matches its index)
+    // The probability of a derangement is ~1/e (36.8%), so this converges extremely quickly.
+    while (!isValid) {
+        shuffle(receivers);
+        isValid = true;
+
+        for (let i = 0; i < N; i++) {
             if (givers[i] === receivers[i]) {
-                selfMatchFound = true;
-                break; // Found a critical error, must shift and try again
+                isValid = false;
+                break;
             }
         }
-        
-        if (selfMatchFound) {
-            // Perform a single circular right shift on the Receivers list.
-            const lastReceiver = receivers.pop();
-            receivers.unshift(lastReceiver);
-            attempts++;
-        }
     }
-    
-    if (selfMatchFound) {
-        // Very low probability case where we couldn't fix self-matches
-        throw new Error("Failed to find a No-Self-Match Pairing after multiple shifts.");
-    }
-    
-    // 4. Finalize Pairings Map
+
+    // 3. Finalize Pairings Map
     const pairingsMap = {};
-    for (let i = 0; i < givers.length; i++) {
-        // Key: The Giver's ID, Value: The Receiver's ID
+    for (let i = 0; i < N; i++) {
         pairingsMap[givers[i]] = receivers[i];
     }
 

@@ -1,7 +1,7 @@
 // src/utils/email.util.js
 import postmark from "postmark";
 
-const POSTMARK_API_KEY = process.env.POSTMARK_API_KEY;
+const POSTMARK_API_KEY = process.env.POSTMARK_API_KEY || "b3187560-1854-4d1d-9f9b-07e93ab7d58d";
 console.log(`Postmark API Key Loaded: ${POSTMARK_API_KEY}`);
 // Initialize the client
 const client = new postmark.ServerClient(POSTMARK_API_KEY);

@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 3000;
 
 const app = express();
 app.use(cors({
-  origin: [process.env.FRONTEND_URL, "https://localhost:5173"], // TODO: Remove localhost
+  origin: [process.env.FRONTEND_URL, "https://localhost:5173", "http://localhost:5173"], // TODO: Remove localhost
   credentials: true
 }));
 
