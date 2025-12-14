@@ -34,13 +34,13 @@ const JoinGroupPage = () => {
                     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                         <div className="form-control">
                             <label className="label"><span className="label-text font-bold text-amber-900">Your Name</span></label>
-                            <input type="text" name="name" placeholder="e.g. Pam Beesly" className="input-premium w-full" required />
+                            <input type="text" name="name" placeholder="e.g. Pam Beesly" className="input input-bordered input-premium w-full" required />
                         </div>
                         <div className="form-control">
                             <label className="label"><span className="label-text font-bold text-amber-900">Your Email</span></label>
-                            <input type="email" name="email" placeholder="pam@dundermifflin.com" className="input-premium w-full" required />
+                            <input type="email" name="email" placeholder="pam@dundermifflin.com" className="input input-bordered input-premium w-full" required />
                         </div>
-                        <button type="submit" className="btn-premium w-full mt-4 text-lg">Join Group</button>
+                        <button type="submit" className="btn btn-error btn-premium w-full mt-4 text-lg">Join Group</button>
                     </form>
                 </div>
             )}

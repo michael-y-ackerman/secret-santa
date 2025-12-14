@@ -73,7 +73,7 @@ const CreateGroupForm = ({ onCancel }) => {
                     </div>
 
                     <div className="pt-4">
-                        <button type="submit" className="btn-premium w-full text-lg h-14 border-2 border-red-800 shadow-[4px_4px_0px_0px_rgba(185,28,28,0.2)] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(185,28,28,0.3)] transition-all !cursor-pointer">
+                        <button type="submit" className="btn btn-error btn-premium w-full text-lg h-14 border-2 border-red-800 shadow-[4px_4px_0px_0px_rgba(185,28,28,0.2)] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(185,28,28,0.3)] transition-all !cursor-pointer">
                             Create & Verify Group
                         </button>
                         <p className="text-center text-xs text-stone-500 mt-4">

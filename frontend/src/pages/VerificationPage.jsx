@@ -41,7 +41,7 @@ const VerificationPage = () => {
                 {groupId && (
                     <button
                         onClick={() => navigate(`/groups/${groupId}`)}
-                        className="btn-premium px-8 py-3 text-lg font-bold w-full border-2 border-red-800 shadow-[4px_4px_0px_0px_rgba(185,28,28,0.2)] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(185,28,28,0.3)] transition-all !cursor-pointer"
+                        className="btn btn-error btn-premium px-8 py-3 text-lg font-bold w-full border-2 border-red-800 shadow-[4px_4px_0px_0px_rgba(185,28,28,0.2)] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(185,28,28,0.3)] transition-all !cursor-pointer"
                     >
                         Go to Group Page
                     </button>
