@@ -71,32 +71,34 @@ const HomePage = () => {
         /* Original Centered Layout for No Groups */
         <>
           {!mode && (
-            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto w-full animate-fade-in-up delay-100">
-              <ActionCard
-                title="Quick Draw"
-                description="No emails required. Just add names on a single device and reveal matches instantly. Perfect for in-person gatherings."
-                icon={Zap}
-                isComingSoon={true}
-              />
+            <>
+              <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto w-full animate-fade-in-up delay-100">
+                <ActionCard
+                  title="Quick Draw"
+                  description="No emails required. Just add names on a single device and reveal matches instantly. Perfect for in-person gatherings."
+                  icon={Zap}
+                  isComingSoon={true}
+                />
 
-              <ActionCard
-                title="Full Group"
-                description="The complete experience. Invite friends via magic links, set gift limits, and manage the exchange securely online."
-                icon={Mail}
-                onClick={() => setMode('full')}
-                isSelected={false}
-              />
-            </div>
-            
-             <div className="text-center mt-12 animate-fade-in-up delay-200">
-                <p className="text-stone-500 mb-2 font-serif italic">Already part of a group?</p>
-                <button 
-                    onClick={() => setIsLoginOpen(true)}
-                    className="btn btn-ghost hover:bg-amber-100 text-amber-800 underline decoration-amber-300 decoration-2 underline-offset-4"
-                >
-                    Recover your session here
-                </button>
-             </div>
+                <ActionCard
+                  title="Full Group"
+                  description="The complete experience. Invite friends via magic links, set gift limits, and manage the exchange securely online."
+                  icon={Mail}
+                  onClick={() => setMode('full')}
+                  isSelected={false}
+                />
+              </div>
+              
+               <div className="text-center mt-12 animate-fade-in-up delay-200">
+                  <p className="text-stone-500 mb-2 font-serif italic">Already part of a group?</p>
+                  <button 
+                      onClick={() => setIsLoginOpen(true)}
+                      className="btn btn-ghost hover:bg-amber-100 text-amber-800 underline decoration-amber-300 decoration-2 underline-offset-4"
+                  >
+                      Recover your session here
+                  </button>
+               </div>
+            </>
           )}
 
           {mode === 'full' && (
